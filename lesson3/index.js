@@ -2,6 +2,7 @@
 import fs from "fs";
 import { Transform } from "stream";
 import readline from "readline"
+import yargs from "yargs";
 
 const LOGS = "./logs.log";
 // const requests = [
@@ -57,7 +58,9 @@ async function processLineByLine(){
         ];
         searchIP.forEach((el)=> {
             if (line.includes(el)){
-                fs.appendFile(`./${"logs_" + el}`, line + "\n", (err)=> console.log(err))
+                fs.appendFile(`./${"logs_" + el}`, line + "\n", (err)=> {
+                    if (err) console.log(err);
+                })
             }
         })
     }
