@@ -1,12 +1,15 @@
 {
   "name": "nodejs",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node lesson1/index.js"
+    "start": "node lesson3/cli.js",
+    "start": "node cli.js"
+  },
+  "bin": {
+    "reader": "cli.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,7 @@
   "homepage": "https://github.com/AntonR31337/nodejs#readme",
   "dependencies": {
     "colors": "^1.4.0",
+    "inquirer": "^8.2.4",
     "moment": "^2.29.3",
     "moment-precise-range-plugin": "^1.3.0",
     "yargs": "^17.5.1"

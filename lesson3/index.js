@@ -1,8 +1,8 @@
 "use strict"
-import fs from "fs";
-import { Transform } from "stream";
-import readline from "readline"
-import yargs from "yargs";
+const fs = require("fs");
+const readline = require("readline");
+const inquirer = require('inquirer');
+const path = require('path');
 
 const LOGS = "./logs.log";
 // const requests = [
@@ -10,7 +10,7 @@ const LOGS = "./logs.log";
 //     "127.0.0.1 - - [32/Jan/2021:11:11:20 -0300] POST /foo HTTP/1.1 200 0 - curl/7.47.0",
 // ];
 
-console.clear();
+// console.clear();
 
 // fs.writeFile(LOGS, requests[1] + "\n", {
 //     encoding: "utf-8",
@@ -43,6 +43,34 @@ console.clear();
 
 // readStream.pipe(tStream).pipe(process.stdout);
 
+let executionDir = process.cwd();
+// const isFile = (fileName)=> fs.lstatSync(fileName).isFile();
+// const list = fs.readdirSync('./');
+
+const reader = ()=> {
+    console.log(`те дир ${executionDir}`)
+    const isFile = (fileName)=> fs.lstatSync(fileName).isFile();
+    let list = fs.readdirSync(executionDir);
+    inquirer.prompt([
+    {
+        name: 'fileName',
+        type: 'list',
+        message: "Выберите файл",
+        choices: list,
+    }
+    ]).then( ({fileName}) => {
+    if (isFile(fileName)){
+        const fullPath = path.join(executionDir, fileName);
+        const data = fs.readFileSync(fullPath, 'utf-8');
+        // processLineByLine();
+
+        console.log("111"+data);
+    } else {
+        executionDir += `/${fileName}`;
+        console.log(`полный путь ${executionDir}, имя файла ${fileName}, тип ${isFile(fileName)}`);
+        return reader();
+    }
+})};
 
 async function processLineByLine(){
     const fileStream = fs.createReadStream(LOGS);
@@ -65,5 +93,4 @@ async function processLineByLine(){
         })
     }
 }
-
-processLineByLine();
+reader();
