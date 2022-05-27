@@ -3,8 +3,23 @@ const fs = require("fs");
 const readline = require("readline");
 const inquirer = require('inquirer');
 const path = require('path');
+const yargs = require('yargs');
 
 const LOGS = "./logs.log";
+let executionDir = process.cwd();
+
+const options = yargs
+    .positional('d', {
+        describe: "Path to directory",
+        default: executionDir,
+    })
+    .positional("p", {
+        describe: "Pattern",
+        default: "",
+    }).argv;
+    console.log(options);
+    console.log(options._);
+
 // const requests = [
 //     "127.0.0.1 - - [31/Jan/2021:11:11:20 -0300] POST /foo HTTP/1.1 200 0 - curl/7.47.0",
 //     "127.0.0.1 - - [32/Jan/2021:11:11:20 -0300] POST /foo HTTP/1.1 200 0 - curl/7.47.0",
@@ -43,7 +58,6 @@ const LOGS = "./logs.log";
 
 // readStream.pipe(tStream).pipe(process.stdout);
 
-let executionDir = process.cwd();
 // const isFile = (fileName)=> fs.lstatSync(fileName).isFile();
 // const list = fs.readdirSync('./');
 
@@ -59,11 +73,25 @@ const reader = ()=> {
     }
     ]).then( ({fileName}) => {
     if (isFile(executionDir, fileName)){
-        const fullPath = path.join(executionDir, fileName);
-        const data = fs.readFileSync(fullPath, 'utf-8');
-        // processLineByLine();
-
-        console.log(data);
+        inquirer.prompt([
+            {
+                name: 'saveResult',
+                type: 'list',
+                message: 'Сохранить результат поиска в файл?',
+                choices: ['Yes', "No"],
+            }
+        ]).then(({saveResult})=>{
+            const fullPath = path.join(executionDir, fileName);
+            const data = fs.readFileSync(fullPath, 'utf-8');
+            
+            if (saveResult == 'Yes'){
+                processLineByLine();
+            } else {
+                const regExp = new RegExp(options.p, 'igm');
+                console.log(data.match(regExp));
+            }
+        })
+        
     } else {
         // executionDir += `/${fileName}`;
         executionDir = path.join(executionDir, fileName);
@@ -79,10 +107,11 @@ async function processLineByLine(){
     });
 
     for await (const line of rl) {
-        const searchIP = [
-            "127.0.0.1",
-            "127.0.0.2",
-        ];
+        // const searchIP = [
+        //     "127.0.0.1",
+        //     "127.0.0.2",
+        // ];
+        const searchIP = options._;
         searchIP.forEach((el)=> {
             if (line.includes(el)){
                 fs.appendFile(`./${"logs_" + el}`, line + "\n", (err)=> {

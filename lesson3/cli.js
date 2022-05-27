@@ -14,7 +14,6 @@ const path = require('path');
 //         type: 'string',
 //         demandOption: true,
 //     }).argv;
-
     // console.log(options);
 
     // const rl = readline.createInterface({
