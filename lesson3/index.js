@@ -48,8 +48,7 @@ let executionDir = process.cwd();
 // const list = fs.readdirSync('./');
 
 const reader = ()=> {
-    console.log(`те дир ${executionDir}`)
-    const isFile = (fileName)=> fs.lstatSync(fileName).isFile();
+    const isFile = (dir, fileName) => fs.lstatSync(path.resolve(dir, fileName)).isFile();
     let list = fs.readdirSync(executionDir);
     inquirer.prompt([
     {
@@ -59,15 +58,15 @@ const reader = ()=> {
         choices: list,
     }
     ]).then( ({fileName}) => {
-    if (isFile(fileName)){
+    if (isFile(executionDir, fileName)){
         const fullPath = path.join(executionDir, fileName);
         const data = fs.readFileSync(fullPath, 'utf-8');
         // processLineByLine();
 
-        console.log("111"+data);
+        console.log(data);
     } else {
-        executionDir += `/${fileName}`;
-        console.log(`полный путь ${executionDir}, имя файла ${fileName}, тип ${isFile(fileName)}`);
+        // executionDir += `/${fileName}`;
+        executionDir = path.join(executionDir, fileName);
         return reader();
     }
 })};

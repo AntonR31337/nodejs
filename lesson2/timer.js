@@ -2,10 +2,10 @@
 
 // node timer.js YYYY-MM-DD
 
-import colors from "colors";
-import events from "events";
-import moment from "moment" ;
-import momentPreciseRangePlugin from "moment-precise-range-plugin";
+const colors = require("colors");
+const events = require("events");
+const moment = require("moment");
+const momentPreciseRangePlugin = require("moment-precise-range-plugin");
 
 const EventEmitter = events;
 const emitter = new EventEmitter();
@@ -23,7 +23,7 @@ emitter.on('showTimer', (diff) => {
 });
 
 const dateTimer = setInterval(()=>{
-    const now = moment().format();
+    const now = Date.now();
     if (now >= futureDate) {
         emitter.emit('timerEnd')
     } else {
