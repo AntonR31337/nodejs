@@ -4,8 +4,10 @@ const fs = require("fs");
 const path = require('path');
 const http = require('http');
 const socket = require('socket.io');
+const reader = require('./reader.js');
 
 const chatMsgs = [];
+let clientCounter = 1;
 
 const isFile = (path) => fs.lstatSync(path).isFile();
 
@@ -35,10 +37,18 @@ const server = http.createServer((req, res)=> {
 
 const io = socket(server);
 io.on('connection', client => {
-    client.emit('conncected', chatMsgs);
+    client.emit('conncected', chatMsgs, clientCounter);
     client.on('client-msg', (data)=> {
         chatMsgs.push(data);
         client.emit('srv-msg', data);
         client.broadcast.emit('srv-msg', data);
     });
+    clientCounter++;
+    console.log(clientCounter);
+
+    client.on('disconnect', () => {
+        clientCounter -= 1;
+        client.broadcast.emit('user-disconnected', clientCounter)
+        console.log(clientCounter);
+    })
 });
