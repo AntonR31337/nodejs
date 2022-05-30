@@ -44,11 +44,9 @@ io.on('connection', client => {
         client.broadcast.emit('srv-msg', data);
     });
     clientCounter++;
-    console.log(clientCounter);
 
     client.on('disconnect', () => {
         clientCounter -= 1;
         client.broadcast.emit('user-disconnected', clientCounter)
-        console.log(clientCounter);
     })
 });
