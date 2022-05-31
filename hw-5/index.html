@@ -45,8 +45,8 @@
         socket.on('connect', ()=>{
             // socket.on('conncected', data);
             if (!author) {
-                // author = prompt('Hi! What is your name?');
-                author = 'Anton';
+                author = prompt('Hi! What is your name?');
+                // author = 'Anton';
             }
             socket.on('conncected', (data, clientCounter) => {
                 chatCounter.innerText = `В чате сейчас ${clientCounter} участника`;

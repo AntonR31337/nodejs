@@ -20,6 +20,7 @@ const server = http.createServer((req, res)=> {
     if (!fs.existsSync(fullPath)) return res.end('File or directory not found');
 
     if (isFile(fullPath)) {
+        reader(fullPath);
         return fs.createReadStream(fullPath).pipe(res);
     }
     
