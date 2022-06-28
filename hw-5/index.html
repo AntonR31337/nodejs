@@ -4,20 +4,76 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="./index.js"></script>
+    <!-- <script src="./index.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
     <title>Node.js</title>
 </head>
 <body>
+    <a href="/">HOME</a>
+    <a href="/chat.html">CHAT</a>
     <h1>Node.js HW</h1>
     <div class="main">
         <ul>
             ##links
         </ul>
+        <div class="breadCrumbs">
+            <ul>
+                ##breadCrumbs
+            </ul>
+        </div>
     </div>
-    <div class="breadCrumbs">
-        <ul>
-            ##breadCrumbs
-        </ul>
+    <div class="chat">
+        <form id="chatForm" action="#">
+            <input id="input" type="text" autofocus>
+            <button id="button">Send</button>
+            <div id="messages" class="messages"></div>
+        </form>
+        <div id="chatCounter" class="chatCounter">В чате сейчас</div>
     </div>
+    <script>
+        const socket = io('localhost:5555');
+        const messages = document.querySelector('#input');
+        const sendButton = document.querySelector('#button');
+        const chatMessages = document.querySelector('#messages');
+        const chatCounter = document.querySelector('#chatCounter');
+        const chatForm = document.querySelector('#chatForm').addEventListener('click', (event)=> {
+            event.preventDefault();
+        });
+        let author = null;
+        let counter = 0;
+
+        socket.on('connect', ()=>{
+            // socket.on('conncected', data);
+            if (!author) {
+                author = prompt('Hi! What is your name?');
+                // author = 'Anton';
+            }
+            socket.on('conncected', (data, clientCounter) => {
+                chatCounter.innerText = `В чате сейчас ${clientCounter} участника`;
+                data.map((el)=> {
+                    chatMessages.insertAdjacentHTML('afterbegin', `
+                    <div>${el.author}: ${el.message}</div>
+                    `);
+                });
+            });
+            
+        });
+        sendButton.addEventListener('click', ()=> {
+            const data = {
+                author,
+                message: messages.value,
+            };
+            socket.emit('client-msg', data);
+            messages.value = '';
+        });
+        socket.on('srv-msg', data => {
+            chatMessages.insertAdjacentHTML('afterbegin', `<div>${data.author}: ${data.message}</div>`)
+        });
+        socket.on('user-disconnected', (data) => {
+            console.log(chatCounter);
+            chatCounter.innerText = `В чате сейчас ${data} участника`;
+            // chatMessages.insertAdjacentHTML('afterbegin', `<div>${srvMsg.author}: ${srvMsg.message}</div>`)
+        });
+    </script>
 </body>
 </html>
