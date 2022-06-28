@@ -4,6 +4,16 @@ const readline = require("readline");
 const inquirer = require('inquirer');
 const path = require('path');
 const yargs = require('yargs');
+const http = require('http');
+
+const server = http.createServer((req, res)=> {
+    const filePath = path.join(__dirname, "./index.html");
+    const readStream = fs.createReadStream(filePath);
+    res.setHeader('Content-Type', "text/html");
+    readStream.pipe(res);
+});
+
+server.listen(5555);
 
 const LOGS = "./logs.log";
 let executionDir = process.cwd();
@@ -17,8 +27,6 @@ const options = yargs
         describe: "Pattern",
         default: "",
     }).argv;
-    console.log(options);
-    console.log(options._);
 
 // const requests = [
 //     "127.0.0.1 - - [31/Jan/2021:11:11:20 -0300] POST /foo HTTP/1.1 200 0 - curl/7.47.0",
