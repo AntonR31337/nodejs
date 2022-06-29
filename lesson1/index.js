@@ -32,8 +32,12 @@ const changeColor = ()=> {
 
 if ((a % a == 0) && ( a > 0)){
     for (let i = a; i <= b; i++ ) {
-        console.log(currentColor(i));
-        changeColor();
+        let j = 2;
+        if (i % j == 0 && j <= i) {
+            console.log(currentColor(i));
+            changeColor();
+            j++;
+        }
     };
 } else {
     console.log(blue("Вы ввели неверное число"));
