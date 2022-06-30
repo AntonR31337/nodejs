@@ -32,10 +32,20 @@ const changeColor = ()=> {
 
 if ((a % a == 0) && ( a > 0)){
     for (let i = a; i <= b; i++ ) {
-        console.log(currentColor(i));
-        changeColor();
+        if (isPrime(i)) {
+            console.log(currentColor(i));
+            changeColor();
+        }
     };
 } else {
     console.log(blue("Вы ввели неверное число"));
 }
 
+function isPrime(num) {
+    for ( let i = 2, max = Math.sqrt(num); i <= max; i++) {
+        if (num % i === 0) {
+            return false;
+        }
+    }
+    return num > 1
+};
